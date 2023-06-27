@@ -13,7 +13,7 @@ router.get('/getdata',(req,res)=>{
     res.status(200).send("dddd")
 })
 router.get('/get-all-users',get_all_user)
-router.post('/register',upload.single('image'),register)
+router.post('/register',register)
 router.post('/login',login)
 router.get("/get-data-by-userid/:user_id",get_userdata_byid)
 router.delete('/delete-user-details/:user_id',delete_users_details)
