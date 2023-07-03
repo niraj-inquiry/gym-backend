@@ -17,6 +17,7 @@ const role=require('./api/routes/roleRoutes')
 const plan=require('./api/routes/plansRoutes')
 const contact=require('./api/routes/contactusRoutes')
 const career=require('./api/routes/careerRoutes')
+const orderCreate=require('./api/routes/orderRoute')
 // const facilties=require('./api/routes/facilitiesRoutes')
 const verfiy=require('./api/routes/verifyRoutes')
 const revieworder=require('./api/routes/revieworderRoutes')
@@ -32,6 +33,7 @@ const app=express()
 const axios = require('axios');
 const server=http.createServer(app)
 const VendorRouter=require('./routes/vendor/router')
+const centerTyperoute=require('./api/routes/centerTypeRoute')
 app.use(express.json())
 app.use(cors())
 app.use(express.urlencoded({extended: 'false'}))
@@ -47,12 +49,46 @@ app.use(
       // ...
     })
   );
-  
+
+const razorpay = require("razorpay");
+
+app.get("/order", async (req, res, next) => {
+  var instance = new razorpay({
+      key_id: 'rzp_test_VYQEOXFEnP5Ni5',
+      key_secret: 'hN6IH4bHPTBO3utx9uDymYtM'
+  })
+
+  const payment_capture = 1;
+  const amount = 499;
+  const currency = "INR";
+
+  const options = {
+      amount: amount * 100,
+      currency,
+      receipt: "somehastage#id",
+      payment_capture,
+  };
+
+  try {
+      const response = await instance.orders.create(options); 
+      res.json({
+          id: response.id,
+          currency: response.currency,
+          amount: response.amount,
+      });
+  } catch (error) {
+      console.log(error);
+  }
+
+})
+
   //  Vendor Routes start
   app.use('/vendor',VendorRouter )
   // Vendor Routes end
 app.use(express.static(__dirname + '/assets'));
 app.use('/assets',express.static('./assets'))
+// app.use('/api', orderCreate)
+app.use('/api',centerTyperoute)
 app.use('/v1.0/user',user)
 app.use('/v1.0/gymcenter',gymcenter)
 app.use('/v1.0/gymcenterdetails',gymcenterdetails)
