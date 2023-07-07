@@ -33,9 +33,11 @@ var GymCentersSchema = new Schema({
   centerBanner:{
      type:String
   },
-  photos: {
-    type: [],
-  },
+  photos: [
+    {
+      
+    }
+  ],
   email: {
     type: String,
   },

@@ -77,68 +77,108 @@ exports.login = (async (req, res) => {
 
 })
 
+// tocken generation
+
+const crypto = require('crypto');
+const sgMail = require('@sendgrid/mail');
+const ejs = require('ejs');
+sgMail.setApiKey('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');
+const generateVerificationToken = () => {
+    const length = 32; // Length of the verification token
+    return crypto.randomBytes(length).toString('hex');
+  };
   
+const verificationToken = generateVerificationToken();
+
 exports.register = asyncHandler(async (req, res) => {
-
     const {
-        first_name,
-        last_name,
-        email,
-        password,
-        post_code,
-        description,
-        user_type,
-        gender,
-
-    } = req.body
-
-    // let encryptedPassword = bcrypt.hashSync(password, 10)
-
-    // console.log("userregister", req.body)
-    const data = await Users.create({
-        first_name,
-        last_name,
-        email,
-        password,
-        post_code,
-        description,
-        user_type,
-        gender,
+      first_name,
+      last_name,
+      email,
+      password,
+      post_code,
+      description,
+      user_type,
+      gender,
+    } = req.body;
+  
+    // Register the user and generate a verification token
+    const verificationToken = generateVerificationToken(); // Implement your own function to generate a unique verification token
+  
+    const user = await Users.create({
+      first_name,
+      last_name,
+      email,
+      password,
+      post_code,
+      description,
+      user_type,
+      gender,
+      verificationToken, // Add the verification token to the user object
     });
-    res.status(200).json({
-        status: "okay",
-        data: data
-    })
-    // if (email) {
-    //     const userDetail = await Users.find({ email: email })
-    //     console.log("ddddddddddd", userDetail)
-    //     if (userDetail.length === 0) {
-    //         const user = await Users.create({
-    //             first_name,
-    //             last_name,
-    //             email,
-    //             password: encryptedPassword,
-    //             post_code,
-    //             description,
-    //             user_type,
-    //             gender,
-    //             photo: req?.file?.path?.replace("\\", "/")
-    //         })
+  
+    // Prepare the verification email
+    const verificationLink = `https://gym-frontend-mu.vercel.app/verify-user/${verificationToken}`;
+    const text = `Click the following link to verify your email: ${verificationLink}`;
 
+  
+    const msg = {
+      to: email,
+      from: 'thesuperactiv@gmail.com',
+      subject: 'Verify your email',
+      text: text,
+    };
+  
+    // Send the verification email
+    try {
+      await sgMail.send(msg);
+      res.status(200).json({
+        status: 'ok',
+        data: user,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: 'An error occurred while sending the verification email.',
+      });
+    }
+  });
+  
 
-    //         const token = jwt.sign({ id: user._id }, "secretkey", { expiresIn: '1d' })
+// exports.register = asyncHandler(async (req, res) => {
 
-    //         res.status(200).send({ status: true, message: "Registration Successful", data: user, token: token })
-    //     }
-    //     else {
-    //         res.status(200).send({ status: false, message: "User Already Exists" })
-    //     }
-    // }
-    // else {
-    //     res.status(200).send({ status: false, message: "Registration unsuccessful" })
-    // }
+//     const {
+//         first_name,
+//         last_name,
+//         email,
+//         password,
+//         post_code,
+//         description,
+//         user_type,
+//         gender,
 
-})
+//     } = req.body
+
+//     // let encryptedPassword = bcrypt.hashSync(password, 10)
+
+//     // console.log("userregister", req.body)
+//     const data = await Users.create({
+//         first_name,
+//         last_name,
+//         email,
+//         password,
+//         post_code,
+//         description,
+//         user_type,
+//         gender,
+//     });
+//     res.status(200).json({
+//         status: "okay",
+//         data: data
+//     })
+    
+
+// })
 
 exports.get_userdata_byid = asyncHandler(async (req, res) => {
     try {
