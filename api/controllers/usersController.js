@@ -88,97 +88,108 @@ const generateVerificationToken = () => {
     return crypto.randomBytes(length).toString('hex');
   };
   
-const verificationToken = generateVerificationToken();
+
+
+
+const nodemailer = require('nodemailer');
 
 exports.register = asyncHandler(async (req, res) => {
-    const {
-      first_name,
-      last_name,
-      email,
-      password,
-      post_code,
-      description,
-      user_type,
-      gender,
-    } = req.body;
-  
-    // Register the user and generate a verification token
-    const verificationToken = generateVerificationToken(); // Implement your own function to generate a unique verification token
-  
-    const user = await Users.create({
-      first_name,
-      last_name,
-      email,
-      password,
-      post_code,
-      description,
-      user_type,
-      gender,
-      verificationToken, // Add the verification token to the user object
-    });
-  
-    // Prepare the verification email
-    const verificationLink = `https://gym-frontend-mu.vercel.app/verify-user/${verificationToken}`;
-    const text = `Click the following link to verify your email: ${verificationLink}`;
+  const {
+    first_name,
+    last_name,
+    email,
+    password,
+    post_code,
+    description,
+    user_type,
+    gender,
+  } = req.body;
 
+  const data = await Users.create({
+    first_name,
+    last_name,
+    email,
+    password,
+    post_code,
+    description,
+    user_type,
+    gender,
+  });
+
+  // Generate verification token
+  const verificationToken = crypto.randomBytes(20).toString('hex');
   
-    const msg = {
-      to: email,
-      from: 'thesuperactiv@gmail.com',
-      subject: 'Verify your email',
-      text: text,
-    };
-  
-    // Send the verification email
-    try {
-      await sgMail.send(msg);
-      res.status(200).json({
-        status: 'ok',
-        data: user,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        error: 'An error occurred while sending the verification email.',
-      });
+  // Update the user document with the verification token
+  // Make sure you have a "verify_status" and "verificationToken" field in your Users schema
+  data.verify_status = false;
+  data.verificationToken = verificationToken;
+  await data.save();
+  console.log(verificationToken);
+  // Create the verification link using the token and the frontend URL
+  const verificationLink = `http://localhost:3000/verify-user/${verificationToken}`;
+
+  // Create a transporter object to send emails (e.g., using Gmail)
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'niraj.inquiry@gmail.com',
+      pass: 'ixydmpiujhzjrvdr',
+    },
+  });
+
+  // Prepare the email content
+  const mailOptions = {
+    from: 'niraj.inquiry@gmail.com',
+    to: email,
+    subject: 'Account Verification',
+    text: `Please click the following link to verify your account: ${verificationLink}`,
+  };
+
+  // Send the verification email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
     }
   });
+
+  res.status(200).json({
+    status: 'okay',
+    data: data,
+  });
+});
+
+// Verification endpoint
+exports.verifyUser = asyncHandler(async (req, res) => {
+    const { verificationToken } = req.params;
+  
+    // Find the user with the given verification token
+    const user = await Users.findOne({ verificationToken });
+    console.log(user);
+    if (!user) {
+      // Handle invalid or expired token
+      return res.status(400).json({ error: 'Invalid verification token.' });
+    }
+  
+    // Check if the received token matches the stored token
+    if (req.params.verificationToken !== user.verificationToken) {
+      // Handle token mismatch
+      return res.status(400).json({ error: 'Verification token does not match.' });
+    }
+  
+    // Update the user's verify_status to true
+    user.verify_status = true;
+    user.verificationToken = undefined; // Remove the token after verification
+    await user.save();
+  
+    // Redirect to your frontend or send a response indicating successful verification
+    // res.redirect('https://example.com/verification-success');
+    res.status(200).json({ status: 'success' });
+  });
+  
   
 
-// exports.register = asyncHandler(async (req, res) => {
-
-//     const {
-//         first_name,
-//         last_name,
-//         email,
-//         password,
-//         post_code,
-//         description,
-//         user_type,
-//         gender,
-
-//     } = req.body
-
-//     // let encryptedPassword = bcrypt.hashSync(password, 10)
-
-//     // console.log("userregister", req.body)
-//     const data = await Users.create({
-//         first_name,
-//         last_name,
-//         email,
-//         password,
-//         post_code,
-//         description,
-//         user_type,
-//         gender,
-//     });
-//     res.status(200).json({
-//         status: "okay",
-//         data: data
-//     })
-    
-
-// })
 
 exports.get_userdata_byid = asyncHandler(async (req, res) => {
     try {
