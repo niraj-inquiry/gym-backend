@@ -7,8 +7,24 @@ const mongo = require("mongodb");
 const { default: mongoose } = require("mongoose");
 const { isEmpty } = require("../../generalfunction");
 const gymcenters = require("../models/gymcenters");
-require("dotenv").config;
 
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+require('dotenv').config()
+const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { v4: uuidv4 } = require("uuid");
+const path = require("path");
+const bucketName = process.env.BUCKET_NAME
+const accessKey = process.env.ACCESS_KEY
+const secretKey = process.env.SECRET_KEY
+const bucketRegion = process.env.BUCKET_REGION
+
+const S3 = new S3Client({
+    credentials: {
+        accessKeyId: accessKey,
+        secretAccessKey: secretKey
+    },
+    region: bucketRegion
+})
 exports.get_center_list_by_userid = asyncHandler(async (req, res) => {
   const gymdata = await GymCenters.find();
 
@@ -164,13 +180,29 @@ exports.get_gym_all_data = asyncHandler(async (req, res) => {
 
   res.status(200).send({ data: gymdata, status: true });
 });
-
+const imageKeys = ["centerBanner"]
 exports.get_verify_all_data = asyncHandler(async (req, res) => {
   //  const gymdata = await GymCenters.find().sort({ created_date: 'desc' })
   const gymdata = await GymCenters.find({
     verify_status: true,
     active_status: true,
   });
+
+  for (let i = 0; i < gymdata.length; i++) {
+    for (let j = 0; j < imageKeys.length; j++) {
+        const key = imageKeys[j]
+        if (gymdata[i][key] != undefined && gymdata[i][key] != "") {
+          console.log('coming',)  
+          const getObjectParams = {
+                Bucket: bucketName,
+                Key: gymdata[i][key]
+            }
+            const command = new GetObjectCommand(getObjectParams);
+            const url = await getSignedUrl(S3, command, { expiresIn: 3600 });
+            gymdata[i][key] = url
+        }
+    }
+  }
 
   res.status(200).send({ data: gymdata, status: true });
 });
@@ -469,22 +501,7 @@ exports.get_verify_all_data = asyncHandler(async (req, res) => {
 
 
 
-require('dotenv').config()
-const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
-const { v4: uuidv4 } = require("uuid");
-const path = require("path");
-const bucketName = process.env.BUCKET_NAME
-const accessKey = process.env.ACCESS_KEY
-const secretKey = process.env.SECRET_KEY
-const bucketRegion = process.env.BUCKET_REGION
 
-const S3 = new S3Client({
-    credentials: {
-        accessKeyId: accessKey,
-        secretAccessKey: secretKey
-    },
-    region: bucketRegion
-})
 
 //@aws-sdk/client-s3 @aws-sdk/s3-request-presigner
 // AWS.config.update({
@@ -779,7 +796,7 @@ exports.deactivatecenter = asyncHandler(async (req, res) => {
 
 exports.updategymfeaturebyid = async (req, res) => {
   const { id } = req.params;
-
+  
   try {
     const company = await GymCenters.findById(id);
 
@@ -829,3 +846,4 @@ exports.updategymfeaturebyid = async (req, res) => {
 
   
 };
+
