@@ -207,7 +207,7 @@ exports.get_verify_all_data = asyncHandler(async (req, res) => {
   res.status(200).send({ data: gymdata, status: true });
 });
 
-// exports.gymcenterRegister = asyncHandler(async (req, res) => {
+
 //   try {
 //     const {
 //       center_name,
@@ -596,8 +596,6 @@ exports.get_verify_all_data = asyncHandler(async (req, res) => {
 
 
 exports.gymcenterRegister=async(req, res)=>{
-  
-
         for (const key in req.files) {
           const uuid = uuidv4();
           const file = req.files[key][0];
@@ -794,9 +792,64 @@ exports.deactivatecenter = asyncHandler(async (req, res) => {
   console.log("login-------", updateres);
 });
 
-exports.updategymfeaturebyid = async (req, res) => {
-  const { id } = req.params;
+// exports.updategymfeaturebyid = async (req, res) => {
+//   const { id } = req.params;
   
+//   try {
+//     const company = await GymCenters.findById(id);
+
+//     if (!company) {
+//       return res.status(404).json({ error: "Company not found" });
+//     }
+
+   
+
+//     const equip = req.body.equipmentData;
+//     const aminities = req.body.amentitiesData;
+//     const schedule = req.body.scheduleData;
+//     const newTrainer = req.body.newTrainerData;
+//     console.log(schedule,newTrainer); 
+//     switch (true) {
+//       case equip !== undefined && Array.isArray(equip) && equip.length > 0:
+//         company.equipmentData.push(...equip);
+//         break;
+//       case aminities !== undefined &&
+//         Array.isArray(aminities) &&
+//         aminities.length > 0:
+//         company.amentitiesData.push(...aminities);
+//         break;
+//       case schedule !== undefined &&
+//         Array.isArray(schedule) &&
+//         schedule.length > 0:
+//         company.scheduleData.push(...schedule);
+//         break;
+//       case newTrainer !== undefined &&
+//         Array.isArray(newTrainer) &&
+//         newTrainer.length > 0:
+//         company.newTrainerData.push(...newTrainer);
+//         break;
+//       default:
+//         console.log("failed to push data");
+//         break;
+//     }
+//     const data = await company.save();
+
+//     res.status(200).json({
+//       status: "success",
+//       data: data,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+
+  
+// };
+
+
+// Controller for updating equipmentData
+exports.updateEquipmentDataById = async (req, res) => {
+  const { id } = req.params;
+
   try {
     const company = await GymCenters.findById(id);
 
@@ -804,36 +857,12 @@ exports.updategymfeaturebyid = async (req, res) => {
       return res.status(404).json({ error: "Company not found" });
     }
 
-    // Add multiple data to the "empl" array start
+    const { equipmentData } = req.body;
 
-    const equip = req.body.equipmentData;
-    const aminities = req.body.amentitiesData;
-    const schedule = req.body.scheduleData;
-    const newTrainer = req.body.newTrainerData;
-    console.log(schedule,newTrainer); 
-    switch (true) {
-      case equip !== undefined && Array.isArray(equip) && equip.length > 0:
-        company.equipmentData.push(...equip);
-        break;
-      case aminities !== undefined &&
-        Array.isArray(aminities) &&
-        aminities.length > 0:
-        company.amentitiesData.push(...aminities);
-        break;
-      case schedule !== undefined &&
-        Array.isArray(schedule) &&
-        schedule.length > 0:
-        company.scheduleData.push(...schedule);
-        break;
-      case newTrainer !== undefined &&
-        Array.isArray(newTrainer) &&
-        newTrainer.length > 0:
-        company.newTrainerData.push(...newTrainer);
-        break;
-      default:
-        console.log("failed to push data");
-        break;
+    if (Array.isArray(equipmentData) && equipmentData.length > 0) {
+      company.equipmentData.push(...equipmentData);
     }
+
     const data = await company.save();
 
     res.status(200).json({
@@ -843,7 +872,89 @@ exports.updategymfeaturebyid = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
 
-  
+// Controller for updating amentitiesData
+exports.updateAmentitiesDataById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const company = await GymCenters.findById(id);
+
+    if (!company) {
+      return res.status(404).json({ error: "Company not found" });
+    }
+
+    const { amentitiesData } = req.body;
+
+    if (Array.isArray(amentitiesData) && amentitiesData.length > 0) {
+      company.amentitiesData.push(...amentitiesData);
+    }
+
+    const data = await company.save();
+
+    res.status(200).json({
+      status: "success",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Controller for updating scheduleData
+exports.updateScheduleDataById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const company = await GymCenters.findById(id);
+
+    if (!company) {
+      return res.status(404).json({ error: "Company not found" });
+    }
+
+    const { scheduleData } = req.body;
+
+    if (Array.isArray(scheduleData) && scheduleData.length > 0) {
+      company.scheduleData.push(...scheduleData);
+    }
+
+    const data = await company.save();
+
+    res.status(200).json({
+      status: "success",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Controller for updating newTrainerData
+exports.updateNewTrainerDataById = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const company = await GymCenters.findById(id);
+
+    if (!company) {
+      return res.status(404).json({ error: "Company not found" });
+    }
+
+    const { newTrainerData } = req.body;
+
+    if (Array.isArray(newTrainerData) && newTrainerData.length > 0) {
+      company.newTrainerData.push(...newTrainerData);
+    }
+
+    const data = await company.save();
+
+    res.status(200).json({
+      status: "success",
+      data: data,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
