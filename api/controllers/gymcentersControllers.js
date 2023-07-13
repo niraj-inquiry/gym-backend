@@ -181,7 +181,7 @@ exports.get_gym_all_data = asyncHandler(async (req, res) => {
   res.status(200).send({ data: gymdata, status: true });
 });
 const imageKeys = ["centerBanner"]
-exports.get_verify_all_data = asyncHandler(async (req, res) => {
+exports.get_verify_all_data = async (req, res) => {
   //  const gymdata = await GymCenters.find().sort({ created_date: 'desc' })
   const gymdata = await GymCenters.find({
     verify_status: true,
@@ -205,7 +205,7 @@ exports.get_verify_all_data = asyncHandler(async (req, res) => {
   }
 
   res.status(200).send({ data: gymdata, status: true });
-});
+};
 
 
 //   try {
@@ -792,58 +792,7 @@ exports.deactivatecenter = asyncHandler(async (req, res) => {
   console.log("login-------", updateres);
 });
 
-// exports.updategymfeaturebyid = async (req, res) => {
-//   const { id } = req.params;
-  
-//   try {
-//     const company = await GymCenters.findById(id);
 
-//     if (!company) {
-//       return res.status(404).json({ error: "Company not found" });
-//     }
-
-   
-
-//     const equip = req.body.equipmentData;
-//     const aminities = req.body.amentitiesData;
-//     const schedule = req.body.scheduleData;
-//     const newTrainer = req.body.newTrainerData;
-//     console.log(schedule,newTrainer); 
-//     switch (true) {
-//       case equip !== undefined && Array.isArray(equip) && equip.length > 0:
-//         company.equipmentData.push(...equip);
-//         break;
-//       case aminities !== undefined &&
-//         Array.isArray(aminities) &&
-//         aminities.length > 0:
-//         company.amentitiesData.push(...aminities);
-//         break;
-//       case schedule !== undefined &&
-//         Array.isArray(schedule) &&
-//         schedule.length > 0:
-//         company.scheduleData.push(...schedule);
-//         break;
-//       case newTrainer !== undefined &&
-//         Array.isArray(newTrainer) &&
-//         newTrainer.length > 0:
-//         company.newTrainerData.push(...newTrainer);
-//         break;
-//       default:
-//         console.log("failed to push data");
-//         break;
-//     }
-//     const data = await company.save();
-
-//     res.status(200).json({
-//       status: "success",
-//       data: data,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-
-  
-// };
 
 
 // Controller for updating equipmentData
@@ -931,30 +880,51 @@ exports.updateScheduleDataById = async (req, res) => {
 };
 
 // Controller for updating newTrainerData
-exports.updateNewTrainerDataById = async (req, res) => {
-  const { id } = req.params;
+  exports.updateNewTrainerDataById = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const company = await GymCenters.findById(id);
+      if (!company) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+      const { newTrainerData } = req.body;
+      if (Array.isArray(newTrainerData) && newTrainerData.length > 0) {
+        company.newTrainerData.push(...newTrainerData);
+      }
+      // Upload tProfile image to S3 bucket
+      if (req.files && req.files.tProfile) {
+        const file = req.files.tProfile[0];
+        const ext = path.extname(file.originalname);
+        const uuid = uuidv4();
+        const key = `${uuid}${ext}`;
 
-  try {
-    const company = await GymCenters.findById(id);
+        const f = {
+          Bucket: bucketName,
+          Key: key,
+          Body: file.buffer,
+          ContentType: file.mimetype,
+        };
 
-    if (!company) {
-      return res.status(404).json({ error: "Company not found" });
+        const command = new PutObjectCommand(f);
+        await S3.send(command);
+
+        // Set tProfile to the S3 image URL
+        const imageKey = `https://${bucketName}.s3.amazonaws.com/${key}`;
+        company.newTrainerData.forEach((trainer) => {
+          trainer.tProfile = imageKey;
+        });
+      }
+      
+      const data = await company.save();
+      console.log(data);
+      res.status(200).json({
+        status: "success",
+        data: data,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
+  };
 
-    const { newTrainerData } = req.body;
 
-    if (Array.isArray(newTrainerData) && newTrainerData.length > 0) {
-      company.newTrainerData.push(...newTrainerData);
-    }
-
-    const data = await company.save();
-
-    res.status(200).json({
-      status: "success",
-      data: data,
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
 

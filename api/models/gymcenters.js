@@ -96,11 +96,15 @@ var GymCentersSchema = new Schema({
   newTrainerData:[
     {
       tName:String,
-      tDay:String,
       tProfile:String,
-      tstartTime:String,
-      tendTime:String,
-      tactivity:String
+      tRating:String,
+      tDay:[
+        {
+          day:String,
+          startTime:String,
+          endTime:String
+        }
+      ],
     }
   ]
 });
