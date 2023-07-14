@@ -126,7 +126,7 @@ exports.register = asyncHandler(async (req, res) => {
   await data.save();
   console.log(verificationToken);
   // Create the verification link using the token and the frontend URL
-  const verificationLink = `https://superactive.avantikain.com/verify-user/${verificationToken}`;
+  const verificationLink = `https://gym-frontend-mu.vercel.app/verify-user/${verificationToken}`;
 
   // Create a transporter object to send emails (e.g., using Gmail)
   const transporter = nodemailer.createTransport({
