@@ -75,3 +75,19 @@ exports.get_order =asyncHandler( async (req, res)=>{
   }
 })
 
+exports.get_order_by_id=asyncHandler( async (req, res)=>{
+  const {id}=req.params;
+  
+  try {
+    
+    const data=await OrderReview.findById(id)
+    res.status(200).json({
+      status:"Order Found By Id",
+      data:data
+    })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+)
