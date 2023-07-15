@@ -31,3 +31,16 @@ exports.createOrder =asyncHandler (async (req, res) => {
     })
   
 });
+
+exports.update_order_by_id=asyncHandler(async(req, res)=>{
+  const { id } = req.params;
+  try {
+    const data=await OrderReview.findByIdAndUpdate({id})
+    res.status(200).json({
+      status:"Order Successfully Updated",
+      data:data
+    })
+  } catch (error) {
+    console.log(error);
+  }
+})
