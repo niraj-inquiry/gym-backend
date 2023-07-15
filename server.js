@@ -17,7 +17,7 @@ const role=require('./api/routes/roleRoutes')
 const plan=require('./api/routes/plansRoutes')
 const contact=require('./api/routes/contactusRoutes')
 const career=require('./api/routes/careerRoutes')
-const orderCreate=require('./api/routes/orderRoute')
+
 // const facilties=require('./api/routes/facilitiesRoutes')
 const verfiy=require('./api/routes/verifyRoutes')
 const revieworder=require('./api/routes/revieworderRoutes')
@@ -34,6 +34,7 @@ const axios = require('axios');
 const server=http.createServer(app)
 const VendorRouter=require('./routes/vendor/router')
 const centerTyperoute=require('./api/routes/centerTypeRoute')
+const orderReview=require('./api/routes/createorderRoute')
 app.use(express.json())
 app.use(cors())
 app.use(express.urlencoded({extended: 'false'}))
@@ -87,7 +88,7 @@ app.get("/order", async (req, res, next) => {
   // Vendor Routes end
 app.use(express.static(__dirname + '/assets'));
 app.use('/assets',express.static('./assets'))
-// app.use('/api', orderCreate)
+app.use('/orderapi',orderReview)
 app.use('/api',centerTyperoute)
 app.use('/v1.0/user',user)
 app.use('/v1.0/gymcenter',gymcenter)
