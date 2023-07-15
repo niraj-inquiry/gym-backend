@@ -34,7 +34,7 @@ exports.createOrder =asyncHandler (async (req, res) => {
 
 exports.update_order_by_id = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { transactionId, orderId, date } = req.body; 
+  const { transactionId, orderId, date ,userId} = req.body; 
 
   try {
     const updatedData = await OrderReview.findByIdAndUpdate(
@@ -43,6 +43,7 @@ exports.update_order_by_id = asyncHandler(async (req, res) => {
         transactionId,
         orderId,
         date,
+        userId
       },
       { new: true }
     );
@@ -56,4 +57,17 @@ exports.update_order_by_id = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Failed to update order" });
   }
 });
+
+exports.get_order =asyncHandler( async (req, res)=>{
+  
+  try {
+    const data=await OrderReview.find();
+    res.status(200).json({
+      status:"Order found by id",
+      data:data
+    })
+  } catch (error) {
+    console.log(error);
+  }
+})
 

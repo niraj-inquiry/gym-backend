@@ -24,6 +24,9 @@ const OrderReview=new mongoose.Schema({
   },
   userId:{
     type:String
+  },
+  payment_status:{
+    type:String
   }
 })
 
