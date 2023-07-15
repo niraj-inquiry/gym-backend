@@ -26,7 +26,8 @@ const OrderReview=new mongoose.Schema({
     type:String
   },
   payment_status:{
-    type:String
+    type:String,
+    default:'0',
   }
   ,
   created_date: {
