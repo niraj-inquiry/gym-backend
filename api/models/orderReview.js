@@ -28,6 +28,11 @@ const OrderReview=new mongoose.Schema({
   payment_status:{
     type:String
   }
+  ,
+  created_date: {
+    type: Date,
+    default: Date.now,
+  },
 })
 
 const orderreview=mongoose.model('orderreview',OrderReview);

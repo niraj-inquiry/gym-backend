@@ -34,12 +34,15 @@ exports.createOrder =asyncHandler (async (req, res) => {
 
 exports.update_order_by_id = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { transactionId, orderId, date ,userId} = req.body; 
+  const { transactionId, orderId, date ,userId ,amount,
+    passtype,} = req.body; 
 
   try {
     const updatedData = await OrderReview.findByIdAndUpdate(
       id,
       {
+        amount,
+        passtype,
         transactionId,
         orderId,
         date,
