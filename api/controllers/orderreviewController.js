@@ -14,7 +14,9 @@ exports.createOrder =asyncHandler (async (req, res) => {
     transactionId,
     orderId,
     date,
-    centerBanner
+    centerBanner,
+    userAddress,
+    userName
   } = req.body;
   const data=await OrderReview.create({
     userId,
@@ -25,7 +27,9 @@ exports.createOrder =asyncHandler (async (req, res) => {
     transactionId,
     orderId,
     date,
-    centerBanner
+    centerBanner,
+    userAddress,
+    userName
   });
   
     res.status(200).json({
@@ -51,7 +55,7 @@ exports.update_order_by_id = asyncHandler(async (req, res) => {
         date,
         userId,
         payment_status,
-        centerBanner
+        centerBanner,
       },
       { new: true }
     );
