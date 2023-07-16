@@ -16,7 +16,8 @@ exports.createOrder =asyncHandler (async (req, res) => {
     date,
     centerBanner,
     userAddress,
-    userName
+    userName,
+    phone
   } = req.body;
   const data=await OrderReview.create({
     userId,
@@ -29,7 +30,8 @@ exports.createOrder =asyncHandler (async (req, res) => {
     date,
     centerBanner,
     userAddress,
-    userName
+    userName,
+    phone
   });
   
     res.status(200).json({

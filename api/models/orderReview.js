@@ -34,6 +34,9 @@ const OrderReview=new mongoose.Schema({
   },
   userAddress:{
     type:String
+  },
+  phone:{
+    type:String
   }
   ,
   centerBanner:{
