@@ -14,6 +14,7 @@ exports.createOrder =asyncHandler (async (req, res) => {
     transactionId,
     orderId,
     date,
+    centerBanner
   } = req.body;
   const data=await OrderReview.create({
     userId,
@@ -23,7 +24,9 @@ exports.createOrder =asyncHandler (async (req, res) => {
     vendorId,
     transactionId,
     orderId,
-    date});
+    date,
+    centerBanner
+  });
   
     res.status(200).json({
         status:"Order recived successfully",
@@ -35,7 +38,7 @@ exports.createOrder =asyncHandler (async (req, res) => {
 exports.update_order_by_id = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { transactionId, orderId, date ,userId ,amount,
-    passtype,payment_status} = req.body; 
+    passtype,payment_status,centerBanner} = req.body; 
 
   try {
     const updatedData = await OrderReview.findByIdAndUpdate(
@@ -47,7 +50,8 @@ exports.update_order_by_id = asyncHandler(async (req, res) => {
         orderId,
         date,
         userId,
-        payment_status
+        payment_status,
+        centerBanner
       },
       { new: true }
     );

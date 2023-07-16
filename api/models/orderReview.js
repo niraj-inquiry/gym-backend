@@ -30,6 +30,9 @@ const OrderReview=new mongoose.Schema({
     default:'0',
   }
   ,
+  centerBanner:{
+    type:String
+  },
   created_date: {
     type: Date,
     default: Date.now,
