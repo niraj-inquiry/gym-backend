@@ -28,8 +28,20 @@ const OrderReview=new mongoose.Schema({
   payment_status:{
     type:String,
     default:'0',
+  },
+  userName:{
+    type:String
+  },
+  userAddress:{
+    type:String
+  },
+  phone:{
+    type:String
   }
   ,
+  centerBanner:{
+    type:String
+  },
   created_date: {
     type: Date,
     default: Date.now,
