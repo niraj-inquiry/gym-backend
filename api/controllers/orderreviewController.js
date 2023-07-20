@@ -26,7 +26,6 @@ exports.createOrder =asyncHandler (async (req, res) => {
     passtype,
     centerId,
     centerName,
-
     vendorId,
     transactionId,
     orderId,

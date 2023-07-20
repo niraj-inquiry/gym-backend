@@ -16,6 +16,9 @@ const OrderReview=new mongoose.Schema({
   centerId:{
     type:String
   },
+  centerName:{
+   type:String
+  },
   passtype:{
     type:String
   },
