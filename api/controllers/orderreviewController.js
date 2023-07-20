@@ -10,6 +10,7 @@ exports.createOrder =asyncHandler (async (req, res) => {
     amount,
     passtype,
     centerId,
+    centerName,
     vendorId,
     transactionId,
     orderId,
@@ -20,6 +21,8 @@ exports.createOrder =asyncHandler (async (req, res) => {
     amount,
     passtype,
     centerId,
+    centerName,
+
     vendorId,
     transactionId,
     orderId,
