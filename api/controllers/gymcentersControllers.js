@@ -926,5 +926,17 @@ exports.updateScheduleDataById = async (req, res) => {
     }
   };
 
+  exports.getGymDatabyId=async (req, res)=>{
+    const {id}=req.params;
+    try {
+      const data =await GymCenters.findById(id);
+      res.status('200').json({
+        status:"Data Found",
+        data:data
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 

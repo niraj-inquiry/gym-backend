@@ -22,11 +22,12 @@ const {
   updateScheduleDataById,
   updateAmentitiesDataById,
   updateEquipmentDataById,
+  getGymDatabyId
 } = require("../controllers/gymcentersControllers");
 
 const storage = multer.memoryStorage();
 const uploadfile = multer({ storage: storage });
-
+router.get('/get-gym-by-id/:id',getGymDatabyId)
 router.get("/gym-data-by-country/:country", gym_data_by_country);
 router.get("/gym-country-list", gym_country_list);
 router.post(
