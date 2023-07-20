@@ -19,6 +19,22 @@ const OrderReview=new mongoose.Schema({
   centerName:{
    type:String
   },
+  trainerName:{
+    type:String
+  },
+  passStartDate:{
+    type:String
+   },
+  passEndDate:{
+   type:String
+  },
+  bookingSlot:[
+    {
+      day:String,
+      startTime:String,
+      endTime:String
+    }
+  ],
   passtype:{
     type:String
   },

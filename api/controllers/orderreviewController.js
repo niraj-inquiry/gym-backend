@@ -18,11 +18,16 @@ exports.createOrder =asyncHandler (async (req, res) => {
     centerBanner,
     userAddress,
     userName,
-    phone
+    trainerName,
+    phone,
+    passStartDate,
+    passEndDate
   } = req.body;
   const data=await OrderReview.create({
     userId,
     amount,
+    passStartDate,
+    passEndDate,
     passtype,
     centerId,
     centerName,
@@ -30,6 +35,7 @@ exports.createOrder =asyncHandler (async (req, res) => {
     transactionId,
     orderId,
     date,
+    trainerName,
     centerBanner,
     userAddress,
     userName,
