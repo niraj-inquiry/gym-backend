@@ -21,7 +21,8 @@ exports.createOrder =asyncHandler (async (req, res) => {
     trainerName,
     phone,
     passStartDate,
-    passEndDate
+    passEndDate,
+    bookingSlot
   } = req.body;
   const data=await OrderReview.create({
     userId,
@@ -39,7 +40,8 @@ exports.createOrder =asyncHandler (async (req, res) => {
     centerBanner,
     userAddress,
     userName,
-    phone
+    phone,
+    bookingSlot
   });
   
     res.status(200).json({

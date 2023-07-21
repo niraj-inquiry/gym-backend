@@ -28,13 +28,9 @@ const OrderReview=new mongoose.Schema({
   passEndDate:{
    type:String
   },
-  bookingSlot:[
-    {
-      day:String,
-      startTime:String,
-      endTime:String
-    }
-  ],
+  bookingSlot:{
+   type:String
+  }, 
   passtype:{
     type:String
   },
