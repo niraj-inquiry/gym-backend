@@ -22,7 +22,8 @@ const {
   updateScheduleDataById,
   updateAmentitiesDataById,
   updateEquipmentDataById,
-  getGymDatabyId
+  getGymDatabyId,
+  createFacilities
 } = require("../controllers/gymcentersControllers");
 
 const storage = multer.memoryStorage();
@@ -54,5 +55,6 @@ router.patch('/add-equipment/:id', updateEquipmentDataById)
 router.patch('/add-amenities/:id', updateAmentitiesDataById)
 router.patch('/add-gym-schedule/:id', updateScheduleDataById)
 router.patch('/add-new-trainer/:id', updateNewTrainerDataById)
+router.patch('/create-facility/:id', createFacilities)
 
 module.exports = router;

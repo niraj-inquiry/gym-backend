@@ -632,7 +632,8 @@ exports.gymcenterRegister=async(req, res)=>{
         equipmentData,
         amentitiesData,
         scheduleData,
-        newTrainerData
+        newTrainerData,
+        facilities
       } = req.body;
 
         
@@ -659,7 +660,8 @@ exports.gymcenterRegister=async(req, res)=>{
           equipmentData:[],
           amentitiesData:[],
           scheduleData:[],
-          newTrainerData:[]
+          newTrainerData:[],
+          facilities:[]
         })
         res.status(200).json({
           status:"created center",
@@ -878,7 +880,28 @@ exports.updateScheduleDataById = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+exports.createFacilities= async (req, res)=>{
+  const {id}=req.params;
+  try {
+    const company= await GymCenters.findById(id);
+    if (!company) {
+      return res.status(404).json({error:"company not found"})
+    }
+    const {facilities}=req.body;
+    if (Array.isArray(facilities) && facilities.length > 0) {
+      company.facilities.push(...facilities);
+    }
 
+    const data = await company.save();
+
+    res.status(200).json({
+      status: "success",
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
 // Controller for updating newTrainerData
   exports.updateNewTrainerDataById = async (req, res) => {
     const { id } = req.params;

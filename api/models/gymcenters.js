@@ -30,14 +30,10 @@ var GymCentersSchema = new Schema({
   contact_number: {
     type: String,
   },
-  centerBanner:{
-     type:String
+  centerBanner: {
+    type: String,
   },
-  photos: [
-    {
-      
-    }
-  ],
+  photos: [{}],
   email: {
     type: String,
   },
@@ -65,8 +61,7 @@ var GymCentersSchema = new Schema({
     type: String,
   },
   created_by_userid: {
-    type:String
-    
+    type: String,
   },
   active_status: {
     type: Boolean,
@@ -78,35 +73,40 @@ var GymCentersSchema = new Schema({
       about_us: String,
       equipment_brand: String,
       equipment_modal_number: String,
-      equipment_image: String
-    }
+      equipment_image: String,
+    },
   ],
-  amentitiesData:[
+  amentitiesData: [
     {
-      amentitiesName:String
-    }
+      amentitiesName: String,
+    },
   ],
-  scheduleData:[
-   {
-    day:String,
-    startTime:String,
-    endTime:String
-   }
-  ],
-  newTrainerData:[
+  facilities: [
     {
-      tName:String,
-      tProfile:String,
-      tRating:String,
-      tDay:[
+      name: String,
+    },
+  ],
+  scheduleData: [
+    {
+      day: String,
+      startTime: String,
+      endTime: String,
+    },
+  ],
+  newTrainerData: [
+    {
+      tName: String,
+      tProfile: String,
+      tRating: String,
+      tDay: [
         {
-          day:String,
-          startTime:String,
-          endTime:String
-        }
+          day: String,
+          startTime: String,
+          endTime: String,
+        },
       ],
-    }
-  ]
+    },
+  ],
 });
 
 module.exports = mongoose.model("GymCenters", GymCentersSchema);
